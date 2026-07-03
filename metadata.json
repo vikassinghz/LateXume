@@ -1,0 +1,6 @@
+{
+  "name": "LateXume",
+  "description": "An AI-powered resume builder with real-time LaTeX-styled professional templates, bullet point enhancement, and instant PDF rendering.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
