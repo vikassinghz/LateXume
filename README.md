@@ -1,164 +1,247 @@
-# LateXume
+<div align="center">
 
-LateXume is an AI-assisted resume builder that helps you create, improve, preview, and export a polished resume without fighting formatting. It combines a clean browser editor, live ATS scoring, AI-powered text cleanup, document import, and export tools for both LaTeX and Word.
+# <td width="33%"><img src="./screenshots/01-landing.png" alt="LateXume landing page" /></td>
 
-## What it does
+### AI-Powered Resume Builder — Write Faster. Score Higher. Export Anywhere.
 
-LateXume is built for people who want a resume that looks professional and reads well for both recruiters and ATS systems. You can start from scratch, import an existing resume, or paste raw content and shape it into a cleaner version.
+LateXume turns a rough resume into a polished, ATS-ready document — with live editing, AI-assisted rewrites, and one-click export to **LaTeX** or **Word**.
 
-It gives you:
+<p>
+<img src="https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+<img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
+<img src="https://img.shields.io/badge/Tailwind_CSS_v4-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+</p>
+<p>
+<img src="https://img.shields.io/badge/Node.js_18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
+<img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" />
+<img src="https://img.shields.io/badge/Groq-F55036?style=for-the-badge&logoColor=white" alt="Groq" />
+<img src="https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white" alt="Gemini" />
+</p>
 
-- A structured resume editor with live preview
-- ATS scoring and suggestions based on your resume content
-- AI-assisted bullet point, summary, and skills improvements
-- Resume import from PDF, DOCX, images, markdown, text, and JSON
-- LaTeX source export and Word DOCX export
-- A resume parsing flow that can fall back to Gemini for PDF text extraction when local parsing is not enough
-- Groq as the primary AI provider for most resume generation tasks
+[Features](#-features) · [How It Works](#-how-it-works) · [Tech Stack](#-tech-stack) · [Getting Started](#-getting-started) · [Scripts](#-available-scripts)
 
-## Why this is useful
+</div>
 
-Most resume tools either make editing awkward or produce documents that look fine but are hard to keep ATS-friendly. LateXume tries to solve both problems at once. It keeps the writing process fast, keeps the layout consistent, and gives you feedback before you send anything out.
+---
 
-It is especially useful if you want to:
+## 🎬 Preview
 
-- Turn an old resume into a cleaner version quickly
-- Improve bullet points so they sound specific and impactful
-- Check whether your resume is missing common ATS signals
-- Export a professional document without hand-writing LaTeX
-- Keep your resume data saved locally in the browser while you edit
+<table>
+<tr>
+<td width="33%"><img src="./screenshots/01-landing.png" alt="LateXume landing page" /></td>
+<td width="33%"><img src="./screenshots/02-build-modes.png" alt="Build mode selection screen" /></td>
+<td width="33%"><img src="./screenshots/03-style-selection.png" alt="Template and style selection" /></td>
+</tr>
+<tr>
+<td align="center"><sub>Landing page</sub></td>
+<td align="center"><sub>Scratch, import, or check your ATS score</sub></td>
+<td align="center"><sub>Pick a template, typeface & accent</sub></td>
+</tr>
+</table>
 
-## Tech stack
+---
 
-Frontend:
+## 🧭 Overview
+
+Most resume tools make you choose: an editor that feels good to use, or an output that looks professional. **LateXume doesn't make you choose.**
+
+Start from a blank page, import an existing resume, or paste in raw content — LateXume cleans it up, scores it against ATS signals, and exports it in the format you actually need.
+
+| Goal | How LateXume helps |
+|---|---|
+| 🔁 Refresh an old resume | Import it, clean it up, keep editing |
+| ✍️ Sharpen your bullets | AI rewrites for clarity and impact |
+| 🎯 Pass the ATS scan | Live scoring + keyword suggestions |
+| 📤 Export without the hassle | One click to LaTeX or Word, no manual formatting |
+| 💾 Never lose a draft | Resume state autosaves in your browser |
+
+---
+
+## ✨ Features
+
+- 🧩 **Structured editor** with a live, real-time preview
+- 📊 **ATS scoring** with actionable improvement suggestions
+- 🤖 **AI rewriting** for bullet points, summaries, and skills
+- 📥 **Import from anywhere** — PDF, DOCX, images, Markdown, text, or JSON
+- 📤 **Dual export** — LaTeX source *or* a ready-to-edit Word document
+- 💾 **Local persistence** — your work is saved in-browser, reload-proof
+
+---
+
+## 🧠 How It Works
+
+LateXume splits into two layers: a **React app** for editing and preview, and an **Express server** that handles AI calls and document parsing.
+
+```mermaid
+flowchart LR
+    U(["User"]) --> FE["React Frontend"]
+    FE <--> SRV["Express Server"]
+    SRV --> AI{"AI Request"}
+    AI -->|primary| GROQ["Groq"]
+    AI -.->|fallback| GEM["Gemini"]
+    SRV --> PDF["PDF Upload"]
+    PDF --> LOCAL["unpdf (local)"]
+    LOCAL -.->|empty result| GEM
+    SRV --> DOC["docx / mammoth"]
+```
+
+- **Groq runs first** for resume writing, rewriting, summaries, skills, and ATS-related generation.
+- **Gemini is the fallback** — it only steps in when Groq isn't available.
+- **PDF parsing tries locally first** with `unpdf`; if the extracted text comes back empty, Gemini extracts it server-side instead.
+
+> [!TIP]
+> Because of this fallback chain, Gemini can still appear in your server logs even when Groq is configured as primary — it's acting as a safety net, not the default writing engine.
+
+---
+
+## 🧰 Tech Stack
+
+<table>
+<tr>
+<td valign="top" width="34%">
+
+**Frontend**
 
 - React 19
 - TypeScript
 - Vite
 - Tailwind CSS v4
-- Motion and GSAP for animation
-- Lucide React for icons
+- Motion + GSAP
+- Lucide React
 
-Backend:
+</td>
+<td valign="top" width="33%">
+
+**Backend**
 
 - Express
 - Node.js
-- tsx for local development
-- esbuild for the production server bundle
+- tsx (dev runtime)
+- esbuild (prod bundle)
 
-AI and document tooling:
+</td>
+<td valign="top" width="33%">
 
-- Groq SDK for primary resume generation
-- Google GenAI for fallback Gemini calls and server-side PDF extraction
-- unpdf for local PDF text extraction
-- docx for Word export generation
-- mammoth for DOCX text extraction
+**AI & Documents**
 
-## How it works
+- Groq SDK (primary AI)
+- Google GenAI (fallback + PDF extraction)
+- unpdf (local PDF text)
+- docx (Word export)
+- mammoth (DOCX import)
 
-The app is split into two parts:
+</td>
+</tr>
+</table>
 
-1. The browser app handles editing, previewing, ATS checks, and exports.
-2. The Express server handles AI calls and document parsing.
+---
 
-The AI flow is intentionally practical:
+## 📁 Supported File Formats
 
-- Groq is used first for resume writing, rewriting, summaries, skill suggestions, and ATS-related generation.
-- Gemini is kept as a fallback for cases where Groq is unavailable.
-- For PDF uploads, the server first tries local extraction with unpdf.
-- If the PDF text comes back empty, Gemini can step in to extract the document text server-side.
+| Category | Formats |
+|---|---|
+| Documents | PDF, DOCX, DOC |
+| Text | TXT, Markdown |
+| Data | JSON |
+| Images | PNG, JPG, JPEG, WebP, HEIC, HEIF |
 
-That means Gemini may appear in the logs even when Groq is the main provider for resume generation. In this app, Gemini is mainly a fallback and extraction helper, not the default writing engine.
+---
 
-## Main features
+## 🚀 Getting Started
 
-- Build a resume from scratch with live preview
-- Import an existing resume and clean it up
-- Upload PDF, DOCX, TXT, MD, JSON, or image files for parsing
-- Generate or improve bullet points, summaries, and skills with AI
-- Check ATS-style resume quality and keyword alignment
-- Export to DOCX for editing in Word
-- Copy or download the LaTeX source for Overleaf or local compilation
-- Save editor state in localStorage so work persists between sessions
+**Fast path:**
 
-## Running locally
+```bash
+git clone <your-repo-url>
+cd LateXume
+npm install
+npm run dev
+```
 
 ### Prerequisites
 
-- Node.js 18 or newer
+- Node.js **18+**
 
-### Install
+### 1 · Install dependencies
 
 ```bash
 npm install
 ```
 
-### Environment variables
+### 2 · Configure environment variables
 
-Create a `.env.local` file in the project root and add at least one AI key.
+Create a `.env.local` file in the project root with at least one AI key:
 
 ```bash
 GROQ_API_KEY=your_groq_key
 GEMINI_API_KEY=your_gemini_key
 ```
 
-Groq is the primary provider. Gemini is useful as a backup and for PDF extraction fallback.
+> [!IMPORTANT]
+> Groq is the primary provider. Gemini is optional, but recommended as a backup and for PDF extraction fallback.
 
-### Run in development
+### 3 · Run in development
 
 ```bash
 npm run dev
 ```
 
-The app starts the local Express server and the frontend dev flow from the same project.
+Starts the Express server and the frontend dev flow together.
 
-### Build for production
+### 4 · Build for production
 
 ```bash
 npm run build
 ```
 
-### Start the production server
+### 5 · Start the production server
 
 ```bash
 npm start
 ```
 
-## Available scripts
+---
 
-- `npm run dev` - starts the development server with `tsx server.ts`
-- `npm run build` - builds the Vite frontend and bundles the Node server
-- `npm start` - runs the production server from `dist/server.cjs`
-- `npm run lint` - type-checks the project with `tsc --noEmit`
-- `npm run clean` - removes generated build output
+## 📜 Available Scripts
 
-## File format support
+| Command | Description |
+|---|---|
+| `npm run dev` | Starts the dev server via `tsx server.ts` |
+| `npm run build` | Builds the Vite frontend and bundles the Node server |
+| `npm start` | Runs the production server from `dist/server.cjs` |
+| `npm run lint` | Type-checks the project with `tsc --noEmit` |
+| `npm run clean` | Removes generated build output |
 
-LateXume can work with several common resume formats:
+---
 
-- PDF
-- DOCX / DOC
-- TXT / Markdown
-- JSON
-- Image uploads such as PNG, JPG, JPEG, WebP, HEIC, and HEIF
+## ⚡ Why It's Fast
 
-## What makes it efficient
+- 💾 Resume state lives in the browser, so reloads never wipe your work
+- 📄 Local PDF extraction is always tried before any AI fallback
+- ⚡ Groq handles most generation, keeping the main writing path quick
+- 🔌 The server only wakes up for parsing, exporting, or AI calls
+- 🖥️ Vite + modern React keep editing and previewing responsive
 
-The app is lightweight in the places that matter:
+---
 
-- Resume state is stored locally in the browser, so reloads do not wipe your work.
-- Local PDF extraction is attempted first before falling back to AI extraction.
-- Groq handles most generation tasks, which keeps the main writing path fast and focused.
-- The server only gets involved when parsing, exporting, or calling AI models.
-- The UI is built with Vite and modern React, so edits and previews stay responsive.
+## 📝 Notes
 
-## Notes
+> [!NOTE]
+> - If Groq isn't configured, supported generation paths fall back to Gemini.
+> - If Gemini isn't configured, PDF extraction fallback may be limited when local parsing fails.
+> - The ATS checker is meant to guide improvement, not replace a real recruiter review.
+> - Built for fast iteration and clean output over heavy design gimmicks.
 
-- If Groq is not configured, the app can fall back to Gemini for supported generation paths.
-- If Gemini is not configured, PDF text extraction fallback may be limited when local parsing fails.
-- The ATS checker is meant to guide improvement, not replace a real recruiter review.
-- The app is optimized for fast iteration, clean output, and practical resume editing rather than heavy design gimmicks.
+---
 
-## In short
+## 🤝 Contributing
 
-LateXume is a resume builder for people who want something practical: fast editing, stronger wording, ATS-aware structure, and export options that are actually useful. It is meant to save time, reduce formatting friction, and make the resume itself easier to improve.
+Issues and pull requests are welcome — feel free to open one if you spot a bug or have an idea.
+
+
+<div align="center">
+
+Built to make resumes less painful, one bullet point at a time.
+
+</div>
