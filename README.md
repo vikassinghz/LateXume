@@ -1,6 +1,6 @@
 <div align="center">
 
-# <td width="33%"><img src="./screenshots/01-landing.png" alt="LateXume landing page" /></td>
+# <td width="33%"><img src="./screenshots/logo.png" alt="LateXume logo" /></td>
 
 ### AI-Powered Resume Builder — Write Faster. Score Higher. Export Anywhere.
 
